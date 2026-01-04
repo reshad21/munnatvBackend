@@ -36,7 +36,7 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'Welcome to the Backend in Nessa Foundation!',
+    message: 'Welcome to the Backend in Munna iptv server!',
   });
 });
 

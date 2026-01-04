@@ -73,15 +73,15 @@ export const sendEmail = async (link: string, email: string) => {
         <p>We received a request to reset your password. Click the button below to reset it. This link is valid for 1 hour.</p>
         <a href="${link}" target="_blank">Reset Password</a>
         <p>If you did not request this password reset, you can ignore this email. Your password will remain unchanged.</p>
-        <p>Thank you,<br>The PUFFKIN Team</p>
+        <p>Thank you,<br>The Munna IPTV Team</p>
       </div>
-      <div class="footer">&copy; 2025 PUFFKIN Team. All rights reserved.</div>
+      <div class="footer">&copy; 2025 Munna IPTV Team. All rights reserved.</div>
     </div>
   </body>
   </html>`;
 
   await transporter.sendMail({
-    from: '"PUFFKIN Support" <saikotroydev@gmail.com>',
+    from: '"Iptv Support" <rasheduzzamanreshad@gmail.com>',
     to: email,
     subject: 'Reset your password within 1 hour',
     text: `Reset your password here: ${link}`,

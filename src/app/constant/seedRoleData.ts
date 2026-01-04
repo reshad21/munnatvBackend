@@ -18,6 +18,7 @@ export const seedRoleAdminData: TAdminRole = {
     { name: 'Packages', path: 'packages', index: 9 },
     { name: 'Gallery', path: 'gallery', index: 10 },
     { name: 'Reviews', path: 'reviews', index: 11 },
+    { name: 'Video Gallery', path: 'video-gallery', index: 12 },
   ],
 };
 
@@ -36,4 +37,5 @@ export const featureNames = {
   packages: 'packages',
   gallery: 'gallery',
   reviews: 'reviews',
+  videoGallery: 'video-gallery',
 };
