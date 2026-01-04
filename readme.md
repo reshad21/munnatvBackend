@@ -145,3 +145,9 @@ If you find this project helpful, feel free to connect with me:
 If you like this project, consider giving it a ⭐ on GitHub! Your support helps me create more open-source tools and templates for the developer community.
 
 Happy coding! 🚀
+
+
+
+## Design Reference
+
+You can view the project's UI/UX designs in the [Figma file](https://www.figma.com/design/2Ng9uZOj1JaQF232l8AJY5/Hilful-Fujool-Tours---Travels?m=auto&t=Hfa1W0qwzAY95Y4y-6).
