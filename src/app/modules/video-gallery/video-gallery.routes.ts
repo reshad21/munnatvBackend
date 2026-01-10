@@ -17,6 +17,12 @@ router.post(
 
 router.get('/', VideoGalleryController.getAllVideos);
 
+router.patch(
+    '/:id/status',
+    auth([featureNames.videoGallery]),
+    VideoGalleryController.updateVideoGalleryStatus,
+);
+
 router.get('/:id', VideoGalleryController.getVideoById);
 
 router.put(

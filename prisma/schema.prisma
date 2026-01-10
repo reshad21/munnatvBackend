@@ -57,7 +57,7 @@ enum Status {
 
 model videoGallery {
   id        String   @id @default(uuid())
-  title     String
+  title     String?   @db.Text
   videoUrl  String
   status    Boolean
   createdAt DateTime @default(now())

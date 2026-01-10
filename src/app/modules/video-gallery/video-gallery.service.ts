@@ -58,10 +58,18 @@ const deleteVideo = async (id: string) => {
     return prisma.videoGallery.delete({ where: { id } });
 };
 
+const updateStatus = async (id: string, status: boolean) => {
+  return prisma.videoGallery.update({
+    where: { id },
+    data: { status: Boolean(status) },
+  });
+};
+
 export const VideoGalleryService = {
     create,
     getAll,
     getById,
     update,
     delete: deleteVideo,
+    updateStatus
 };

@@ -56,10 +56,28 @@ const deleteVideo = catchAsync(async (req, res) => {
     });
 });
 
+
+
+const updateVideoGalleryStatus = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  let status = req.body.status;
+  if (typeof status === 'string') {
+    status = status === 'true' || status === '1';
+  }
+  const response = await VideoGalleryService.updateStatus(id, status);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Video status updated successfully',
+    data: response,
+  });
+});
+
 export const VideoGalleryController = {
     createVideo,
     getAllVideos,
     getVideoById,
     updateVideo,
     deleteVideo,
+    updateVideoGalleryStatus
 };
