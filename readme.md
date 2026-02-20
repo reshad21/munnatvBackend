@@ -151,3 +151,6 @@ Happy coding! 🚀
 ## Design Reference
 
 You can view the project's UI/UX designs in the [Figma file](https://www.figma.com/design/2Ng9uZOj1JaQF232l8AJY5/Hilful-Fujool-Tours---Travels?m=auto&t=Hfa1W0qwzAY95Y4y-6).
+
+
+generate token
