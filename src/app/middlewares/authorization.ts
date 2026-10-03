@@ -3,8 +3,27 @@ import configs from '../configs';
 import AppError from '../errors/AppError';
 import catchAsync from '../utils/catchAsync';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import {
+  PermissionAction,
+  buildPermissionsMap,
+  canonicalFeatureKey,
+  hasPermission,
+  permissionsMapFromLegacyFeatures,
+} from '../constant/permissions';
 
-const auth = (requiredFeatures?: string[]) => {
+export type PermissionRequirement =
+  | string
+  | { feature: string; action: PermissionAction };
+
+/**
+ * Route guard. Each entry is either:
+ * - a plain feature key (legacy: any access to the feature is enough), or
+ * - { feature, action } for granular per-action enforcement.
+ * Super Admin bypasses all checks. An empty array means "any authenticated user".
+ * Roles without granular rows fall back to their legacy features
+ * (each stored feature grants all of its supported actions).
+ */
+const auth = (requirements?: PermissionRequirement[]) => {
   return catchAsync(async (req, res, next) => {
     const bearerToken = req.headers.authorization;
 
@@ -28,6 +47,7 @@ const auth = (requiredFeatures?: string[]) => {
         role: {
           include: {
             roleFeature: true,
+            rolePermission: true,
           },
         },
       },
@@ -41,35 +61,38 @@ const auth = (requiredFeatures?: string[]) => {
     const isSuperAdmin =
       user.role?.name?.toLowerCase() === 'super admin';
 
-    if (!isSuperAdmin && requiredFeatures && requiredFeatures.length > 0) {
-      // ✅ Compare path instead of name.
-      // Roles created from the dashboard store frontend-style paths
-      // (`roles` / `settings` / `fivepillars`) while guards use the seed
-      // vocabulary (`roles_permissions` / `page-setting` / `fivePillarsOfIslam`),
-      // so normalize both sides before comparing.
-      const normalizeFeaturePath = (raw: string) => {
-        const key = (raw ?? '').toLowerCase();
-        const aliases: Record<string, string> = {
-          roles: 'roles_permissions',
-          settings: 'page-setting',
-          fivepillars: 'fivepillarsofislam',
-          fivepillar: 'fivepillarsofislam',
-        };
-        return aliases[key] ?? key;
-      };
+    if (!isSuperAdmin && requirements && requirements.length > 0) {
+      const granular = user.role.rolePermission ?? [];
+      const permissionsMap =
+        granular.length > 0
+          ? buildPermissionsMap(
+              granular.map((p) => ({ feature: p.feature, action: p.action })),
+            )
+          : permissionsMapFromLegacyFeatures(
+              (user.role.roleFeature ?? []).map((f) => ({ path: f.path })),
+            );
 
-      const userFeatures = new Set(
-        user.role.roleFeature.map((feature) =>
-          normalizeFeaturePath(feature.path),
-        ),
-      );
+      const missing = requirements.filter((requirement) => {
+        if (typeof requirement === 'string') {
+          const key = canonicalFeatureKey(requirement);
+          return !permissionsMap[key] || permissionsMap[key].length === 0;
+        }
+        return !hasPermission(
+          permissionsMap,
+          requirement.feature,
+          requirement.action,
+        );
+      });
 
-      const hasRequiredFeatures = requiredFeatures.every((feature) =>
-        userFeatures.has(normalizeFeaturePath(feature)),
-      );
-
-      if (!hasRequiredFeatures) {
-        throw new AppError(403, 'You are not authorized to access this route');
+      if (missing.length > 0) {
+        const describe = (requirement: PermissionRequirement) =>
+          typeof requirement === 'string'
+            ? `'${canonicalFeatureKey(requirement)}' access`
+            : `'${requirement.action}' permission on '${canonicalFeatureKey(requirement.feature)}'`;
+        throw new AppError(
+          403,
+          `Forbidden: missing ${missing.map(describe).join(', ')}`,
+        );
       }
     }
 
@@ -78,6 +101,5 @@ const auth = (requiredFeatures?: string[]) => {
     next();
   });
 };
-
 
 export default auth;

@@ -5,12 +5,13 @@ import validation from "../../middlewares/validation";
 import { BlogController } from "./blog.controller";
 import { BlogValidation } from "./blog.validation";
 import { featureNames } from "../../constant/seedRoleData";
+import { can } from "../../constant/permissions";
 
 const router = Router();
 
 router.post(
   '/',
-  auth([featureNames.blogs]),
+  auth([can(featureNames.blogs, 'create')]),
   imageUpload.single('image'),
   validation(BlogValidation.createBlogValidation),
   uploadImages,
@@ -21,7 +22,7 @@ router.get('/', BlogController.getAllBlogs);
 
 router.patch(
   '/:id/status',
-  auth([featureNames.blogs]),
+  auth([can(featureNames.blogs, 'status')]),
   BlogController.updateBlogStatus,
 );
 
@@ -29,7 +30,7 @@ router.get('/:id', BlogController.getBlogById);
 
 router.put(
   '/:id',
-  auth([featureNames.blogs]),
+  auth([can(featureNames.blogs, 'edit')]),
   imageUpload.single('image'),
   validation(BlogValidation.updateBlogValidation),
   uploadImages,
@@ -38,7 +39,7 @@ router.put(
 
 router.delete(
   '/:id',
-  auth([featureNames.blogs]),
+  auth([can(featureNames.blogs, 'delete')]),
   BlogController.deleteBlog,
 );
 

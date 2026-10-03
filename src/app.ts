@@ -5,6 +5,7 @@ import router from './app/routes';
 import { globalErrorHandler } from './app/middlewares/globalErrorHandler';
 import notFoundErrorHandler from './app/middlewares/notFoundErrorHandler';
 import { seedRoleAdmin } from './app/utils/seedRoleAdmin';
+import { migrateRolePermissions } from './app/utils/migrateRolePermissions';
 import cookieParser from 'cookie-parser';
 
 // Initialize the express application
@@ -50,8 +51,10 @@ app.use(globalErrorHandler);
 app.use(notFoundErrorHandler);
 
 // Running the server
-app.listen(config.port, () => {
+app.listen(config.port, async () => {
   // Seed the admin role if it doesn't exist
-  seedRoleAdmin();
+  await seedRoleAdmin();
+  // Backfill granular permissions for pre-existing roles (idempotent)
+  await migrateRolePermissions();
   console.log(`Server is running on port ${config.port}`);
 });

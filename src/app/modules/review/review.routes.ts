@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import auth from '../../middlewares/authorization';
 import { featureNames } from '../../constant/seedRoleData';
+import { can } from '../../constant/permissions';
 import validation from '../../middlewares/validation';
 import { createReviewSchema, updateReviewSchema } from './review.validation';
 import { ReviewController } from './review.controller';
@@ -11,7 +12,7 @@ const router = Router();
 
 router.post(
 	'/',
-	auth([featureNames.reviews]),
+	auth([can(featureNames.reviews, 'create')]),
     imageUpload.single('image'),
     uploadImages,
 	validation(createReviewSchema),
@@ -22,7 +23,7 @@ router.get('/', ReviewController.getAllReviews);
 
 router.patch(
 	'/:id/status',
-	auth([featureNames.reviews]),
+	auth([can(featureNames.reviews, 'status')]),
 	ReviewController.updateReviewStatus,
 );
 
@@ -30,7 +31,7 @@ router.get('/:id', ReviewController.getReviewById);
 
 router.put(
 	'/:id',
-	auth([featureNames.reviews]),
+	auth([can(featureNames.reviews, 'edit')]),
     imageUpload.single('image'),
     uploadImages,
 	validation(updateReviewSchema),
@@ -39,7 +40,7 @@ router.put(
 
 router.delete(
 	'/:id',
-	auth([featureNames.reviews]),
+	auth([can(featureNames.reviews, 'delete')]),
 	ReviewController.deleteReview,
 );
 

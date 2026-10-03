@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { featureNames } from '../../constant/seedRoleData';
+import { can } from '../../constant/permissions';
 import auth from '../../middlewares/authorization';
 import { imageUpload, uploadImages } from '../../middlewares/multer';
 import validation from '../../middlewares/validation';
@@ -10,7 +11,7 @@ const router = Router();
 
 router.post(
   '/',
-  auth([featureNames.settings]),
+  auth([can(featureNames.settingsAboutUs, 'create')]),
   imageUpload.array('images', 10),
   uploadImages,
   validation(AboutUsValidation.createAboutUsValidation),
@@ -21,7 +22,7 @@ router.get('/', AboutUsController.getAboutSection);
 
 router.put(
   '/:id',
-  auth([featureNames.settings]),
+  auth([can(featureNames.settingsAboutUs, 'edit')]),
   imageUpload.array('images', 10),
   uploadImages,
   AboutUsController.updateAboutSection,
@@ -29,7 +30,7 @@ router.put(
 
 router.post(
   '/image',
-  auth([featureNames.settings]),
+  auth([can(featureNames.settingsAboutUs, 'create')]),
   imageUpload.single('image'),
   uploadImages,
   AboutUsController.addAboutSectionImage,
@@ -37,7 +38,7 @@ router.post(
 
 router.delete(
   '/image/:id',
-  auth([featureNames.settings]),
+  auth([can(featureNames.settingsAboutUs, 'delete')]),
   AboutUsController.deleteAboutSectionImage,
 );
 

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import auth from '../../middlewares/authorization';
 import { featureNames } from '../../constant/seedRoleData';
+import { can } from '../../constant/permissions';
 import validation from '../../middlewares/validation';
 import { ServiceController } from './service.controller';
 import { ServiceValidation } from './service.validation';
@@ -10,7 +11,7 @@ const router = Router();
 
 router.post(
   '/',
-  auth([featureNames.services]),
+  auth([can(featureNames.services, 'create')]),
   imageUpload.single('image'),
   validation(ServiceValidation.createServiceValidation),
   uploadImages,
@@ -23,7 +24,7 @@ router.get('/:id', ServiceController.getServiceById);
 
 router.put(
   '/:id',
-  auth([featureNames.services]),
+  auth([can(featureNames.services, 'edit')]),
   imageUpload.single('image'),
   validation(ServiceValidation.updateServiceValidation),
   uploadImages,
@@ -32,13 +33,13 @@ router.put(
 
 router.delete(
   '/:id',
-  auth([featureNames.services]),
+  auth([can(featureNames.services, 'delete')]),
   ServiceController.deleteService,
 );
 
 router.patch(
   '/:id/status',
-  auth([featureNames.services]),
+  auth([can(featureNames.services, 'status')]),
   ServiceController.updateServiceStatus,
 );
 

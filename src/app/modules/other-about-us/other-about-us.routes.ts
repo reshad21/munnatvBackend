@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { featureNames } from '../../constant/seedRoleData';
+import { can } from '../../constant/permissions';
 import auth from '../../middlewares/authorization';
 import { imageUpload, uploadImages } from '../../middlewares/multer';
 
@@ -10,7 +11,7 @@ const router = Router();
 
 router.post(
   '/',
-  auth([featureNames.settings]),
+  auth([can(featureNames.settings, 'create')]),
   imageUpload.single('image'),
   uploadImages,
   OtherAboutUsController.createOtherAboutUs
@@ -22,7 +23,7 @@ router.get('/:id', OtherAboutUsController.getOtherAboutUsById);
 
 router.put(
   '/:id',
-  auth([featureNames.settings]),
+  auth([can(featureNames.settings, 'edit')]),
   imageUpload.single('image'),
   uploadImages,
   OtherAboutUsController.updateOtherAboutUs
@@ -30,7 +31,7 @@ router.put(
 
 router.delete(
   '/:id',
-  auth([featureNames.settings]),
+  auth([can(featureNames.settings, 'delete')]),
   OtherAboutUsController.deleteOtherAboutUs
 );
 

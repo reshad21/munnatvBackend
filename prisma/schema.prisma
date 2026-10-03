@@ -13,14 +13,27 @@ enum RoleStatus {
 }
 
 model Role {
-  id          String        @id @default(uuid())
-  name        String        @unique
-  status      RoleStatus    @default(ACTIVE)
-  isDeleted   Boolean       @default(false)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  roleFeature RoleFeature[]
-  adminUser   AdminUser[]
+  id             String           @id @default(uuid())
+  name           String           @unique
+  status         RoleStatus       @default(ACTIVE)
+  isDeleted      Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  roleFeature    RoleFeature[]
+  rolePermission RolePermission[]
+  adminUser      AdminUser[]
+}
+
+model RolePermission {
+  id        String   @id @default(uuid())
+  feature   String
+  action    String
+  roleId    String
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([roleId, feature, action])
+  @@index([roleId])
 }
 
 model RoleFeature {

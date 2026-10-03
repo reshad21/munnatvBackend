@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import auth from '../../middlewares/authorization';
 import { featureNames } from '../../constant/seedRoleData';
+import { can } from '../../constant/permissions';
 import validation from '../../middlewares/validation';
 import { RoleValidation } from './role.validation';
 import { RoleController } from './role.controller';
@@ -9,33 +10,46 @@ const router = Router();
 
 router.post(
   '/',
-  auth([featureNames.rolesAndPermissions]),
+  auth([can(featureNames.rolesAndPermissions, 'create')]),
   validation(RoleValidation.createRoleValidation),
   RoleController.createRole,
 );
 
-router.get('/', RoleController.getRoles);
+router.get(
+  '/',
+  auth([can(featureNames.rolesAndPermissions, 'view')]),
+  RoleController.getRoles,
+);
 
-router.get('/:id', auth([featureNames.rolesAndPermissions]), RoleController.getRoleById);
+router.get(
+  '/:id',
+  auth([can(featureNames.rolesAndPermissions, 'view')]),
+  RoleController.getRoleById,
+);
 
-// ...existing code...
-
+// Assign admins to roles
 router.patch(
   '/admin-user/:adminUserId/role/:roleId',
-  auth([featureNames.rolesAndPermissions]),
+  auth([can(featureNames.rolesAndPermissions, 'assign')]),
   RoleController.updateAdminUserRole,
 );
 
-// ...existing code...
-
 router.put(
   '/:id',
-  auth([featureNames.rolesAndPermissions]),
+  auth([can(featureNames.rolesAndPermissions, 'edit')]),
   validation(RoleValidation.updateRoleValidation),
   RoleController.updateRole,
 );
 
-router.delete('/:id', auth([featureNames.rolesAndPermissions]), RoleController.deleteRole);
-router.delete('/admin-user/:id', auth([featureNames.rolesAndPermissions]), RoleController.deleteAdminUser);
+router.delete(
+  '/:id',
+  auth([can(featureNames.rolesAndPermissions, 'delete')]),
+  RoleController.deleteRole,
+);
+router.delete(
+  '/admin-user/:id',
+  auth([can(featureNames.rolesAndPermissions, 'delete')]),
+  RoleController.deleteAdminUser,
+);
 
 export const RoleRoutes = router;

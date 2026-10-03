@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { featureNames } from '../../constant/seedRoleData';
+import { can } from '../../constant/permissions';
 import auth from '../../middlewares/authorization';
 import { imageUpload, uploadImages } from '../../middlewares/multer';
 import validation from '../../middlewares/validation';
@@ -16,7 +17,7 @@ router.post(
 
 router.post(
   '/register',
-  auth([featureNames.profile]),
+  auth([can(featureNames.rolesAndPermissions, 'assign')]),
   imageUpload.single('profilePhoto'),
   uploadImages,
   validation(authValidations.registerValidation),
@@ -29,7 +30,7 @@ router.post('/reset-password', AuthController.resetPassword);
 
 router.post(
   '/change-password',
-  auth([featureNames.settings]),
+  auth([can(featureNames.settings, 'edit')]),
   validation(authValidations.changePasswordValidation),
   AuthController.changePassword,
 );
@@ -38,7 +39,7 @@ router.post('/refresh-token', AuthController.refreshAccessToken);
 
 router.get(
   '/admin-users',
-  // auth([featureNames.profile]),
+  auth([can(featureNames.rolesAndPermissions, 'view')]),
   AuthController.getAdminUsers,
 );
 
@@ -46,7 +47,7 @@ router.get('/me', auth([]), AuthController.getLoggedAdminDetails);
 
 router.put(
   '/update-profile',
-  auth([featureNames.profile]),
+  auth([can(featureNames.profile, 'edit')]),
   imageUpload.single('profilePhoto'),
   uploadImages,
   AuthController.updateProfile,
@@ -54,13 +55,13 @@ router.put(
 
 router.get(
   '/admin-users/:id',
-  auth([featureNames.rolesAndPermissions]),
+  auth([can(featureNames.rolesAndPermissions, 'view')]),
   AuthController.getAdminUserById,
 );
 
 router.patch(
   '/admin-users/:id',
-  auth([featureNames.rolesAndPermissions]),
+  auth([can(featureNames.rolesAndPermissions, 'edit')]),
   imageUpload.single('profilePhoto'),
   uploadImages,
   validation(authValidations.updateAdminUserValidation),
@@ -69,13 +70,13 @@ router.patch(
 
 router.put(
   '/admin-users/:id/status',
-  auth([featureNames.profile]),
+  auth([can(featureNames.rolesAndPermissions, 'status')]),
   AuthController.changeAdminUserStatus,
 );
 
 router.delete(
   '/admin-users/:id',
-  auth([featureNames.profile]),
+  auth([can(featureNames.rolesAndPermissions, 'delete')]),
   AuthController.deleteAdminUser,
 );
 

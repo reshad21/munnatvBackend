@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { featureNames } from '../../constant/seedRoleData';
+import { can } from '../../constant/permissions';
 import auth from '../../middlewares/authorization';
 import { imageUpload, uploadImages } from '../../middlewares/multer';
 import { HeroAreaController } from './hero-area.controller';
@@ -8,7 +9,7 @@ const router = Router();
 
 router.post(
   '/',
-  auth([featureNames.settings]),
+  auth([can(featureNames.settingsHeroArea, 'create')]),
   imageUpload.array('images', 10),
   uploadImages,
   HeroAreaController.createHeroSection
@@ -20,7 +21,7 @@ router.get('/:id', HeroAreaController.getHeroSectionById);
 
 router.put(
   '/:id',
-  auth([featureNames.settings]),
+  auth([can(featureNames.settingsHeroArea, 'edit')]),
   imageUpload.array('images', 10),
   uploadImages,
   HeroAreaController.updateHeroSection
@@ -28,7 +29,7 @@ router.put(
 
 router.delete(
   '/:id',
-  auth([featureNames.settings]),
+  auth([can(featureNames.settingsHeroArea, 'delete')]),
   HeroAreaController.deleteHeroSection
 );
 

@@ -37,7 +37,11 @@ const getRoleById = catchAsync(async (req, res) => {
 });
 
 const updateRole = catchAsync(async (req, res) => {
-  const response = await RoleService.updateRoleIntoDB(req.params.id, req.body);
+  const response = await RoleService.updateRoleIntoDB(
+    req.params.id,
+    req.body,
+    req.user,
+  );
 
   sendResponse(res, {
     statusCode: 200,
@@ -48,7 +52,7 @@ const updateRole = catchAsync(async (req, res) => {
 });
 
 const deleteRole = catchAsync(async (req, res) => {
-  const response = await RoleService.deleteRoleFromDB(req.params.id);
+  const response = await RoleService.deleteRoleFromDB(req.params.id, req.user);
 
   sendResponse(res, {
     statusCode: 200,
@@ -75,7 +79,11 @@ const deleteAdminUser = catchAsync(async (req, res) => {
 
 const updateAdminUserRole = catchAsync(async (req, res) => {
   const { adminUserId, newRoleId } = req.body;
-  const response = await RoleService.updateAdminUserRole(adminUserId, newRoleId);
+  const response = await RoleService.updateAdminUserRole(
+    adminUserId,
+    newRoleId,
+    req.user,
+  );
 
   sendResponse(res, {
     statusCode: 200,

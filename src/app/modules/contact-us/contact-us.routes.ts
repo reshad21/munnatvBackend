@@ -1,6 +1,7 @@
 // ContactUs Routes
 import { Router } from 'express';
 import { featureNames } from '../../constant/seedRoleData';
+import { can } from '../../constant/permissions';
 import auth from '../../middlewares/authorization';
 import { imageUpload, uploadImages } from '../../middlewares/multer';
 import validateRequest from '../../middlewares/validation';
@@ -11,7 +12,7 @@ const router = Router();
 
 router.post(
   '/',
-  auth([featureNames.settings]),
+  auth([can(featureNames.settingsContactUs, 'create')]),
   imageUpload.single('image'),
   validateRequest(validation.create),
   uploadImages,
@@ -24,13 +25,17 @@ router.get('/:id', ContactUsController.getContactUsById);
 
 router.put(
   '/:id',
-  auth([featureNames.settings]),
+  auth([can(featureNames.settingsContactUs, 'edit')]),
   imageUpload.single('image'),
   validateRequest(validation.update),
   uploadImages,
   ContactUsController.updateContactUs,
 );
 
-router.delete('/:id', ContactUsController.deleteContactUs);
+router.delete(
+  '/:id',
+  auth([can(featureNames.settingsContactUs, 'delete')]),
+  ContactUsController.deleteContactUs,
+);
 
 export const ContactUsRoutes = router;

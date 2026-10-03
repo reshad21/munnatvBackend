@@ -9,6 +9,10 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { sendEmail } from '../../utils/sendEmail';
 import { builderQuery } from '../../builders/prismaBuilderQuery';
 import { deleteImageFile } from '../../utils/deleteFile';
+import {
+  buildPermissionsMap,
+  permissionsMapFromLegacyFeatures,
+} from '../../constant/permissions';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const sanitizeAdmin = <T extends { password?: unknown }>(admin: T) => {
@@ -231,12 +235,25 @@ const getLoggedAdminDetailsFromDB = async (user: JwtPayload) => {
               index: 'asc',
             },
           },
+          rolePermission: true,
         },
       },
     },
   });
 
-  return sanitizeAdmin(response);
+  const permissions =
+    response.role.rolePermission.length > 0
+      ? buildPermissionsMap(
+          response.role.rolePermission.map((p) => ({
+            feature: p.feature,
+            action: p.action,
+          })),
+        )
+      : permissionsMapFromLegacyFeatures(
+          response.role.roleFeature.map((f) => ({ path: f.path })),
+        );
+
+  return { ...sanitizeAdmin(response), permissions };
 };
 
 const updateAdminProfileIntoDB = async (

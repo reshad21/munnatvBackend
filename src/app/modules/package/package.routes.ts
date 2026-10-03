@@ -1,5 +1,6 @@
 import express from 'express';
 import { featureNames } from '../../constant/seedRoleData';
+import { can } from '../../constant/permissions';
 import auth from '../../middlewares/authorization';
 import { imageUpload, uploadImages } from '../../middlewares/multer';
 import { PackageController } from './package.controller';
@@ -8,7 +9,7 @@ const router = express.Router();
 
 router.post(
     '/',
-    auth([featureNames.packages]),
+    auth([can(featureNames.packages, 'create')]),
     imageUpload.array('images', 10),
     uploadImages,
     PackageController.createPackage
@@ -20,7 +21,7 @@ router.get(
 
 router.patch(
     '/:id/status',
-    auth([featureNames.packages]),
+    auth([can(featureNames.packages, 'status')]),
     PackageController.updatePackageStatus,
 );
 
@@ -30,20 +31,20 @@ router.get(
 );
 router.put(
     '/:id',
-    auth([featureNames.packages]),
+    auth([can(featureNames.packages, 'edit')]),
     imageUpload.array('images', 10),
     uploadImages,
     PackageController.updatePackage
 );
 router.delete(
     '/:id',
-    auth([featureNames.packages]),
+    auth([can(featureNames.packages, 'delete')]),
     PackageController.deletePackage
 );
 
 router.post(
     '/image',
-    auth([featureNames.settings]),
+    auth([can(featureNames.packages, 'create')]),
     imageUpload.single('image'),
     uploadImages,
     PackageController.addPackageImage,
@@ -51,7 +52,7 @@ router.post(
 
 router.delete(
     '/image/:id',
-    auth([featureNames.settings]),
+    auth([can(featureNames.packages, 'delete')]),
     PackageController.deletePackageImage,
 );
 
