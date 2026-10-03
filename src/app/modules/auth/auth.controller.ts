@@ -133,6 +133,49 @@ const getAdminUsers = catchAsync(async (req, res) => {
   });
 });
 
+const getAdminUserById = catchAsync(async (req, res) => {
+  const response = await AuthServices.getAdminUserByIdFromDB(req.params.id);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Admin user fetched successfully',
+    data: response,
+  });
+});
+
+const updateAdminUser = catchAsync(async (req, res) => {
+  const profilePhotoUrl = req.file
+    ? getSingleImageUrl(req, req.file)
+    : undefined;
+
+  if (profilePhotoUrl) {
+    req.body.profilePhoto = profilePhotoUrl;
+  }
+
+  // Empty password means "keep the current password".
+  if (
+    req.body.password === undefined ||
+    req.body.password === null ||
+    String(req.body.password).trim() === ''
+  ) {
+    delete req.body.password;
+  }
+
+  const response = await AuthServices.updateAdminUserIntoDB(
+    req.user,
+    req.params.id,
+    req.body,
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Admin user updated successfully',
+    data: response,
+  });
+});
+
 const changeAdminUserStatus = catchAsync(async (req, res) => {
   const response = await AuthServices.changeAdminUserStatusIntoDB(
     req.params.id,
@@ -170,6 +213,8 @@ export const AuthController = {
   getLoggedAdminDetails,
   updateProfile,
   getAdminUsers,
+  getAdminUserById,
+  updateAdminUser,
   changeAdminUserStatus,
   deleteAdminUser,
 };

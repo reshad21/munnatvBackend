@@ -37,8 +37,22 @@ const changePasswordValidation = z.object({
   }),
 });
 
+const updateAdminUserValidation = z.object({
+  body: z.object({
+    fullName: z.string().min(1, 'Full name is required').optional(),
+    email: z.string().email('Invalid email format').optional(),
+    password: z
+      .string()
+      .min(6, 'Password must be at least 6 characters long')
+      .optional(),
+    roleId: z.string().optional(),
+    status: z.enum(['ACTIVE', 'INACTIVE']).optional(),
+  }),
+});
+
 export const authValidations = {
   loginValidation,
   registerValidation,
   changePasswordValidation,
+  updateAdminUserValidation,
 };

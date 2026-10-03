@@ -52,6 +52,21 @@ router.put(
   AuthController.updateProfile,
 );
 
+router.get(
+  '/admin-users/:id',
+  auth([featureNames.rolesAndPermissions]),
+  AuthController.getAdminUserById,
+);
+
+router.patch(
+  '/admin-users/:id',
+  auth([featureNames.rolesAndPermissions]),
+  imageUpload.single('profilePhoto'),
+  uploadImages,
+  validation(authValidations.updateAdminUserValidation),
+  AuthController.updateAdminUser,
+);
+
 router.put(
   '/admin-users/:id/status',
   auth([featureNames.profile]),

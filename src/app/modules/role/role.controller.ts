@@ -60,7 +60,10 @@ const deleteRole = catchAsync(async (req, res) => {
 
 
 const deleteAdminUser = catchAsync(async (req, res) => {
-  const response = await RoleService.deleteAdminUserFromDB(req.params.id);
+  const response = await RoleService.deleteAdminUserFromDB(
+    req.params.id,
+    req.user,
+  );
 
   sendResponse(res, {
     statusCode: 200,
